@@ -16,12 +16,12 @@ class Post extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'post_category');
+        return $this->belongsToMany(Category::class, 'post_categories');
     }
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'post_tag');
+        return $this->belongsToMany(Tag::class, 'post_tags');
     }
 
     public function comments()

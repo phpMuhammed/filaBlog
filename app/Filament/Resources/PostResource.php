@@ -6,6 +6,7 @@ use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Post;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\MultiSelect;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,7 @@ use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
@@ -31,8 +33,6 @@ class PostResource extends Resource
                 TextInput::make('slug')
                     ->required()
                     ->unique(Post::class, 'slug', ignoreRecord: true),
-                RichEditor::make('content')
-                    ->required(),
                 TextInput::make('image')
                     ->label('Image URL')
                     ->maxLength(255),
@@ -51,6 +51,17 @@ class PostResource extends Resource
                     ->relationship('user', 'name')
                     ->required()
                     ->label('Author'),
+                // Add MultiSelect for Categories
+                MultiSelect::make('categories')
+                    ->relationship('categories', 'name')
+                    ->label('Categories'),
+                // Add MultiSelect for Tags
+                MultiSelect::make('tags')
+                    ->relationship('tags', 'name')
+                    ->label('Tags'),
+                RichEditor::make('content')
+                    ->required()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -65,7 +76,7 @@ class PostResource extends Resource
                 TextColumn::make('published_at')->dateTime(),
                 BooleanColumn::make('status')
                     ->label('Is Published')
-                    ->getStateUsing(fn ($record) => $record->status === 'published'),
+                    ->getStateUsing(fn($record) => $record->status === 'published'),
             ])
             ->filters([
                 SelectFilter::make('status')
